@@ -19,7 +19,7 @@ namespace TuyeresStatusApplication
             int[] m = { 0, 32 }; // 各风口个数，它们的和为风口总数量
             double[] mu = { 0.8337 * Sqrt(1.9), Sqrt(1.9) }; // 各支路流阻比;变直径系数sqrt((12+15/13+15)^5)=0.8337
             double T_Bl = 1180, P_Bl = 0.412; // 高炉入炉风温(°C); 风压(MPa)
-            double phi_Bl_H2O = 11, OE = 5, m_Coal = 155, f_Coal_H2O = 2, V_Bl = 1080;
+            double phi_Bl_H2O = 24, OE = 5, m_Coal = 155, f_Coal_H2O = 2, V_Bl = 1080;
             // 鼓风湿度(g/m3), 富氧率(%), 吨铁喷煤量(kg/tHM), 煤粉含水量(%), 吨铁风量(m3/tHM)
             double M = 160, D_pc = 0.04, L = 0.55; // 煤比，焦炭的平均粒度，风口长度
 
