@@ -12,26 +12,27 @@ namespace Tuyeres_Status
         // 沿程阻力系数, pi, 标准大气压(MPa), 标态下空气密度(kg*m-3)
         private const int T0 = 273; // 常温常数
         private readonly double Q_0; // 总流量(注意单位转换)(m3/s)
-        private double[] d, S = new double[10]; // 风口直径(mm); 风口截面积(mm2)
-        private int[] m; // di风口数量
-        private int n; // 风口总数量
-        private double[] mu;
+        private readonly double[] d, S = new double[10]; // 风口直径(mm); 风口截面积(mm2)
+        private readonly int[] m; // 直径di风口数量
+        private readonly int n; // 风口总数量
+        private readonly double[] mu; // 直径di风口的支路流阻比
         private readonly double T_Bl; // 高炉入炉风温(°C)
 
         // 中间量
-        private double prop; // 压强温度换算比
-        private double v_actua_ave; // 平均实际风速(m/s)
+        private readonly double prop; // 压强温度换算比
+        private readonly double v_actua_ave; // 平均实际风速(m/s)
+        private readonly bool data_proper; // 判断输入数据是否合理
 
         // 计算量
-        private double[] Q = new double[10]; // 各风口流量(m3/s)
-        private double[] v_stand = new double[10]; // 风口标准风速(m/s)
-        private double[] v_actua = new double[10]; // 风口实际风速(m/s)
-        private double[] KE = new double[10]; // 鼓风动能(kJ/s)
+        private readonly double[] Q = new double[10];// 各风口流量(m3/s)
+        private readonly double[] v_stand = new double[10]; // 风口标准风速(m/s)
+        private readonly double[] v_actua = new double[10]; // 风口实际风速(m/s)
+        private readonly double[] KE = new double[10]; // 鼓风动能(kJ/s)
         private double KE_ave; // 平均鼓风动能(kJ/s)
         private double RAFT; // 理论燃烧温度(°C)
-        private double[] D_Raceway = new double[10]; // 风口回旋区深度(m)
-        private double[] H_Raceway = new double[10]; // 风口回旋区高度(m)
-        private double[] W_Raceway = new double[10]; // 风口回旋区宽度(m)
+        private readonly double[] D_Raceway = new double[10]; // 风口回旋区深度(m)
+        private readonly double[] H_Raceway = new double[10]; // 风口回旋区高度(m)
+        private readonly double[] W_Raceway = new double[10]; // 风口回旋区宽度(m)
         private double D_Raceway_ave, H_Raceway_ave, W_Raceway_ave; // 平均值(m)
 
         /// <summary>
@@ -51,28 +52,36 @@ namespace Tuyeres_Status
             this.mu = mu;
             this.T_Bl = T_Bl;
 
-            n = m.Sum(); // 风口总数
-            prop = (T0 + T_Bl) * P0 / ((P0 + P_Bl) * T0);
-            Q_0 = Actual_Q / 60; // 单位转换
-
-            for (int i = 0; i < d.Length; i++)
+            if (m.Sum() <= 0 || d.Sum() <= 0 || mu.Sum() <= 0) { data_proper = false; }
+            else
             {
-                S[i] = PI * Pow(d[i] / 2, 2);
-            }
+                data_proper = true;
+                n = m.Sum(); // 风口总数
+                prop = (T0 + T_Bl) * P0 / ((P0 + P_Bl) * T0);
+                Q_0 = Actual_Q / 60; // 单位转换
 
-            // 计算风口面积和
-            double sum_S = 0;
-            for (int i = 0; i < m.Length; i++)
-            {
-                sum_S += m[i] * S[i];
+
+                for (int i = 0; i < d.Length; i++)
+                {
+                    S[i] = PI * Pow(d[i] / 2, 2);
+                }
+
+
+                // 计算风口面积和
+                double sum_S = 0;
+                for (int i = 0; i < m.Length; i++)
+                {
+                    sum_S += m[i] * S[i];
+                }
+                // 计算平均实际风速
+                v_actua_ave = Q_0 * prop / sum_S;
             }
-            // 计算平均实际风速
-            v_actua_ave = Q_0 * prop / sum_S;
         }
 
         // 计算标准风速与实际风速
         public void Calc_WindSpeed()
         {
+            if (!data_proper) return;
             // 计算公式中的求和项
             double sigma = 0;
             double[] ri1 = new double[d.Length];
@@ -103,6 +112,7 @@ namespace Tuyeres_Status
         // 计算鼓风动能
         public void Calc_KineticEnergy()
         {
+            if (!data_proper) return;
             // 计算各风口鼓风动能
             for (int i = 0; i < d.Length; i++)
             {
@@ -123,6 +133,7 @@ namespace Tuyeres_Status
         /// <param name="V_Bl">吨铁风量(m3/tHM)</param>
         public void Calc_CombustionTemp(double phi_Bl_H2O, double OE, double m_Coal, double f_Coal_H2O, double V_Bl)
         {
+            if (!data_proper) return;
             // 经验线性公式
             RAFT = 1489 + 0.82 * T_Bl - 5.705 * phi_Bl_H2O + 52.778 * OE - 18.01 * (m_Coal * (1 - f_Coal_H2O)) / V_Bl;
         }
@@ -135,6 +146,7 @@ namespace Tuyeres_Status
         /// <param name="L">风口长度(m)</param>
         public void Calc_RacewaySize(double M, double D_pc, double L)
         {
+            if (!data_proper) return;
             // 经验公式
             // 计算风口回旋区深度
             for (int i = 0; i < d.Length; i++)
@@ -165,6 +177,13 @@ namespace Tuyeres_Status
         // 展示计算结果
         public void Display()
         {
+            if (!data_proper) 
+            {
+                Console.WriteLine("未输入数据，或未作计算，或输入数据有误");
+                Console.ReadKey();
+                return;
+            }
+
             Console.WriteLine("风口直径(m)\t风口风量(m3/s)\t标准风速(m/s)\t实际风速(m/s)\t鼓风动能(kJ/s)\t回旋区深度\t回旋区高度\t回旋区宽度");
             for (int i = 0; i < d.Length; i++)
             {
@@ -172,12 +191,21 @@ namespace Tuyeres_Status
             }
             Console.WriteLine("理论燃烧温度RAFT:{0:N3}", RAFT);
             Console.WriteLine("平均鼓风动能:{0:N3}", KE_ave);
+            Console.WriteLine("平均回旋区深度:{0:N3}", D_Raceway_ave);
+            Console.WriteLine("平均回旋区高度:{0:N3}", H_Raceway_ave);
+            Console.WriteLine("平均回旋区宽度:{0:N3}", W_Raceway_ave);
             Console.ReadKey();
         }
 
         // 计算结果写入文件 "v&KE&Q.txt"
         public void Write_t()
         {
+            if (!data_proper)
+            {
+                Console.WriteLine("未输入数据，或未作计算，或输入数据有误");
+                return;
+            }
+
             using (StreamWriter sw = new StreamWriter(@"D:\WorkSpace\VS Project\Tuyeres-Status\v&KE&Q.txt", true))
             {
                 for (int i = 0; i < d.Length; i++)

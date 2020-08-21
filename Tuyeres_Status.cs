@@ -10,13 +10,13 @@ namespace TuyeresStatusApplication
 {
     class Tuyeres_Status
     {
-        static void Main(string[] args)
+        static void Main()
         {
             /****************
             展示*/
             double Actual_Q = 6000; // 实际入炉风量
             double[] d = { 0.12, 0.13 }; // 直径种类
-            int[] m = { 0, 32 }; // 各风口个数，它们的和为风口总数量
+            int[] m = { 5, 27 }; // 各风口个数，它们的和为风口总数量
             double[] mu = { 0.8337 * Sqrt(1.9), Sqrt(1.9) }; // 各支路流阻比;变直径系数sqrt((12+15/13+15)^5)=0.8337
             double T_Bl = 1180, P_Bl = 0.412; // 高炉入炉风温(°C); 风压(MPa)
             double phi_Bl_H2O = 24, OE = 5, m_Coal = 155, f_Coal_H2O = 2, V_Bl = 1080;
