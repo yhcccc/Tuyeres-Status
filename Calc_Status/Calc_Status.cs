@@ -8,12 +8,12 @@
 * 命名空间 ：Calc_Status
 * 机器名称 ：D-14535 
 * CLR 版本 ：4.0.30319.42000
-* 作    者 ：14535
+* 作    者 ：严晗
 * 创建时间 ：2020/8/14 星期五 15:49:49
 * 更新时间 ：2020/8/21 星期五 15:49:49
 * 版 本 号 ：v1.0.0.0
 *******************************************************************
-* Copyright @ 14535 2020. All rights reserved.
+* Copyright @ 严晗 2020. All rights reserved.
 *******************************************************************
 ----------------------------------------------------------------*/
 
@@ -31,7 +31,7 @@ namespace Tuyeres_Status
         // 沿程阻力系数, pi, 标准大气压(MPa), 标态下空气密度(kg*m-3)
         private const int T0 = 273; // 常温常数
         private readonly double Q_0; // 总流量(注意单位转换)(m3/s)
-        private readonly double[] d, S = new double[10]; // 风口直径(mm); 风口截面积(mm2)
+        private readonly double[] d, S = new double[10]; // 风口直径(m); 风口截面积(m2)
         private readonly int[] m; // 直径di风口数量
         private readonly int n; // 风口总数量
         private readonly double[] mu; // 直径di风口的支路流阻比
@@ -39,7 +39,7 @@ namespace Tuyeres_Status
 
         // 中间量
         private readonly double prop; // 压强温度换算比
-        private readonly double v_actua_ave; // 平均实际风速(m/s)
+        private double v_actua_ave; // 平均实际风速(m/s)
         private readonly bool data_proper; // 判断输入数据是否合理
 
         // 计算量
@@ -58,12 +58,12 @@ namespace Tuyeres_Status
         /// 计算风口状态参数
         /// </summary>
         /// <param name="Actual_Q">实际入炉风量(m3/min)</param>
-        /// <param name="d">风口直径d(mm)</param>
-        /// <param name="m">直径di风口数量</param>
-        /// <param name="mu">直径di风口的支路流阻比</param>
         /// <param name="T_Bl">高炉入炉风温(°C)</param>
         /// <param name="P_Bl">风压(MPa)</param>
-        public Calc_Status(double Actual_Q, double[] d, int[] m, double[] mu, double T_Bl, double P_Bl)
+        /// <param name="d">风口直径d(m)</param>
+        /// <param name="m">直径di风口数量</param>
+        /// <param name="mu">直径di风口的支路流阻比</param>
+        public Calc_Status(double Actual_Q, double T_Bl, double P_Bl, double[] d, int[] m, double[] mu)
         {
             /*******  初值赋值   ********/
             this.d = d;
@@ -84,16 +84,6 @@ namespace Tuyeres_Status
                 {
                     S[i] = PI * Pow(d[i] / 2, 2);
                 }
-
-
-                // 计算风口面积和
-                double sum_S = 0;
-                for (int i = 0; i < m.Length; i++)
-                {
-                    sum_S += m[i] * S[i];
-                }
-                // 计算平均实际风速
-                v_actua_ave = Q_0 * prop / sum_S;
             }
         }
 
@@ -112,20 +102,29 @@ namespace Tuyeres_Status
                 sigma += m[k] * ri1[k];
             }
 
-            // 计算风量和标准风速
+            // 计算风量和风速
             /*******  需要考虑边界情况 m=0  ********/
             for (int i = 0; i < d.Length; i++)
             {
+                // 风量
                 Q[i] = ri1[i] * Q_0 / sigma;
+
+                // 标准风速
                 v_stand[i] = 4 * Q[i] / (PI * Pow(d[i], 2));
                 if (m[i] == 0) { Q[i] = -1; v_stand[i] = -1; }
-            }
 
-            // 计算实际风速
-            for (int i = 0; i < d.Length; i++)
-            {
+                // 实际风速
                 v_actua[i] = v_stand[i] == -1 ? -1 : v_stand[i] * prop;
             }
+
+            // 计算风口面积和
+            double sum_S = 0;
+            for (int i = 0; i < m.Length; i++)
+            {
+                sum_S += m[i] * S[i];
+            }
+            // 计算平均实际风速
+            v_actua_ave = Q_0 * prop / sum_S;
         }
 
         // 计算鼓风动能
@@ -140,21 +139,6 @@ namespace Tuyeres_Status
 
             // 计算平均鼓风动能
             KE_ave = rho * Q_0 * Pow(v_actua_ave, 2) / (2 * n * 1000);
-        }
-
-        /// <summary>
-        /// 计算理论燃烧温度
-        /// </summary>
-        /// <param name="phi_Bl_H2O">鼓风湿度(g/m3)</param>
-        /// <param name="OE">富氧率(%)</param>
-        /// <param name="m_Coal">吨铁喷煤量(kg/tHM)</param>
-        /// <param name="f_Coal_H2O">煤粉含水量(%)</param>
-        /// <param name="V_Bl">吨铁风量(m3/tHM)</param>
-        public void Calc_CombustionTemp(double phi_Bl_H2O, double OE, double m_Coal, double f_Coal_H2O, double V_Bl)
-        {
-            if (!data_proper) return;
-            // 经验线性公式
-            RAFT = 1489 + 0.82 * T_Bl - 5.705 * phi_Bl_H2O + 52.778 * OE - 18.01 * (m_Coal * (1 - f_Coal_H2O)) / V_Bl;
         }
 
         /// <summary>
@@ -191,6 +175,21 @@ namespace Tuyeres_Status
             H_Raceway_ave = 70.856 * Pow(Pow(v_actua_ave, 2) / (9.8 * D_pc), -0.404) / Pow(D_Raceway_ave, 0.286);
             W_Raceway_ave = 2.631 * Pow(D_Raceway_ave / L, 0.311) * L;
 
+        }
+
+        /// <summary>
+        /// 计算理论燃烧温度
+        /// </summary>
+        /// <param name="phi_Bl_H2O">鼓风湿度(g/m3)</param>
+        /// <param name="OE">富氧率(%)</param>
+        /// <param name="m_Coal">吨铁喷煤量(kg/tHM)</param>
+        /// <param name="f_Coal_H2O">煤粉含水量(%)</param>
+        /// <param name="V_Bl">吨铁风量(m3/tHM)</param>
+        public void Calc_CombustionTemp(double phi_Bl_H2O, double OE, double m_Coal, double f_Coal_H2O, double V_Bl)
+        {
+            if (!data_proper) return;
+            // 经验线性公式
+            RAFT = 1489 + 0.82 * T_Bl - 5.705 * phi_Bl_H2O + 52.778 * OE - 18.01 * (m_Coal * (1 - f_Coal_H2O)) / V_Bl;
         }
 
         // 展示计算结果
