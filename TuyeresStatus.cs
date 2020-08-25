@@ -47,11 +47,11 @@ namespace TuyeresStatusApplication
             //    double phi_Bl_H2O = 11.2, OE = 3.52, m_Coal = 193.8, f_Coal_H2O = 1.87, V_Bl = 1248;
             //    // 鼓风湿度(g/m3), 富氧率(%), 吨铁喷煤量(kg/tHM), 煤粉含水量(%), 吨铁风量(m3/tHM)
 
-            //    Calc_Status calc = new Calc_Status(Actual_Q, d, m, mu, T_Bl, P_Bl, phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
-            //    // calc_status calc = new calc_status(2350, 0.12, 0.14, 18, 1, 1200, 0.3, 11.2, 3.52, 193.8, 1.87, 1248);
-            //    calc.Calc_WindSpeed();
-            //    calc.Calc_KineticEnergy();
-            //    calc.Write_t();
+            //    CalcStatus calc = new CalcStatus(Actual_Q, d, m, mu, T_Bl, P_Bl, phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
+            //    // calcstatus calc = new calcstatus(2350, 0.12, 0.14, 18, 1, 1200, 0.3, 11.2, 3.52, 193.8, 1.87, 1248);
+            //    calc.CalcWindSpeed();
+            //    calc.CalcKineticEnergy();
+            //    calc.WriteTXT();
             //}
 
 
@@ -66,13 +66,13 @@ namespace TuyeresStatusApplication
             //    // 鼓风湿度(g/m3), 富氧率(%), 吨铁喷煤量(kg/tHM), 煤粉含水量(%), 吨铁风量(m3/tHM)
             //    double M = 160, D_pc = 0.04, L = 0.55; // 煤比，焦炭的平均粒度，风口长度
 
-            //    Calc_Status Calc = new Calc_Status(Actual_Q, d, m, mu, T_Bl, P_Bl);
-            //    // Calc_Status Calc = new Calc_Status(2350, 0.12, 0.14, 18, 1, 1200, 0.3, 11.2, 3.52, 193.8, 1.87, 1248);
-            //    Calc.Calc_WindSpeed();
-            //    Calc.Calc_KineticEnergy();
-            //    Calc.Calc_CombustionTemp(phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
-            //    Calc.Calc_RacewaySize(M, D_pc, L);
-            //    Calc.Write_t();
+            //    CalcStatus Calc = new CalcStatus(Actual_Q, d, m, mu, T_Bl, P_Bl);
+            //    // CalcStatus Calc = new CalcStatus(2350, 0.12, 0.14, 18, 1, 1200, 0.3, 11.2, 3.52, 193.8, 1.87, 1248);
+            //    Calc.CalcWindSpeed();
+            //    Calc.CalcKineticEnergy();
+            //    Calc.CalcCombustionTemp(phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
+            //    Calc.CalcRacewaySize(M, D_pc, L);
+            //    Calc.WriteTXT();
             //}
         }
     }

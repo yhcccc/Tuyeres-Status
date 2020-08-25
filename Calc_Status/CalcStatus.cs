@@ -216,7 +216,7 @@ namespace TuyeresStatus
         }
 
         // 计算结果写入文件 "v&KE&Q.txt"
-        public void Write_t()
+        public void WriteTXT()
         {
             if (!data_proper)
             {
