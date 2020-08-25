@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuyeresStatusApplication", "TuyeresStatusApplication.csproj", "{11E01BED-4787-495A-BEE6-11937C5B1565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calc_Status", "Calc_Status\Calc_Status.csproj", "{4F3DED89-46C8-4AC8-87AA-304C355A2FAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcStatus", "Calc_Status\CalcStatus.csproj", "{4F3DED89-46C8-4AC8-87AA-304C355A2FAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

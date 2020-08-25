@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Math;
-using Tuyeres_Status;
+using TuyeresStatus;
 
 namespace TuyeresStatusApplication
 {
-    class Tuyeres_Status
+    class TuyeresStatus
     {
         static void Main()
         {
@@ -23,11 +23,11 @@ namespace TuyeresStatusApplication
             // 鼓风湿度(g/m3), 富氧率(%), 吨铁喷煤量(kg/tHM), 煤粉含水量(%), 吨铁风量(m3/tHM)
             double M = 160, D_pc = 0.04, L = 0.55; // 煤比(kg/t)，焦炭的平均粒度(m)，风口长度(m)
 
-            Calc_Status Calc = new Calc_Status(Actual_Q, T_Bl, P_Bl, d, m, mu);
-            Calc.Calc_WindSpeed();
-            Calc.Calc_KineticEnergy();
-            Calc.Calc_CombustionTemp(phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
-            Calc.Calc_RacewaySize(M, D_pc, L);
+            CalcStatus Calc = new CalcStatus(Actual_Q, T_Bl, P_Bl, d, m, mu);
+            Calc.CalcWindSpeed();
+            Calc.CalcKineticEnergy();
+            Calc.CalcCombustionTemp(phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
+            Calc.CalcRacewaySize(M, D_pc, L);
             Calc.Display();
 
             /******************/

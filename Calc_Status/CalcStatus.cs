@@ -1,11 +1,11 @@
 ﻿/*----------------------------------------------------------------
-* 项目名称 ：Calc_Status
+* 项目名称 ：CalcStatus
 * 项目描述 ：用于计算风口状态中的风口标准和实际风速，鼓风动能，
 *           理论燃烧温度和风口回旋区大小
-* 类 名 称 ：Calc_Status
+* 类 名 称 ：CalcStatus
 * 类 描 述 ：计算风口状态参数
 * 所在的域 ：WISDRI
-* 命名空间 ：Calc_Status
+* 命名空间 ：CalcStatus
 * 机器名称 ：D-14535 
 * CLR 版本 ：4.0.30319.42000
 * 作    者 ：严晗
@@ -22,15 +22,15 @@ using static System.Math;
 using System.IO;
 using System.Linq;
 
-namespace Tuyeres_Status
+namespace TuyeresStatus
 {
-    public class Calc_Status
+    public class CalcStatus
     {
         // 已知量
         private const double lambda = 0.0126, P0 = 0.1013, rho = 1.293;
         // 沿程阻力系数, pi, 标准大气压(MPa), 标态下空气密度(kg*m-3)
         private const int T0 = 273; // 常温常数
-        private readonly double Q_0; // 总流量(注意单位转换)(m3/s)
+        private readonly double Q0; // 总流量(注意单位转换)(m3/s)
         private readonly double[] d, S = new double[10]; // 风口直径(m); 风口截面积(m2)
         private readonly int[] m; // 直径di风口数量
         private readonly int n; // 风口总数量
@@ -63,7 +63,7 @@ namespace Tuyeres_Status
         /// <param name="d">风口直径d(m)</param>
         /// <param name="m">直径di风口数量</param>
         /// <param name="mu">直径di风口的支路流阻比</param>
-        public Calc_Status(double Actual_Q, double T_Bl, double P_Bl, double[] d, int[] m, double[] mu)
+        public CalcStatus(double Actual_Q, double T_Bl, double P_Bl, double[] d, int[] m, double[] mu)
         {
             /*******  初值赋值   ********/
             this.d = d;
@@ -77,7 +77,7 @@ namespace Tuyeres_Status
                 data_proper = true;
                 n = m.Sum(); // 风口总数
                 prop = (T0 + T_Bl) * P0 / ((P0 + P_Bl) * T0);
-                Q_0 = Actual_Q / 60; // 单位转换
+                Q0 = Actual_Q / 60; // 单位转换
 
 
                 for (int i = 0; i < d.Length; i++)
@@ -88,7 +88,7 @@ namespace Tuyeres_Status
         }
 
         // 计算标准风速与实际风速
-        public void Calc_WindSpeed()
+        public void CalcWindSpeed()
         {
             if (!data_proper) return;
             // 计算公式中的求和项
@@ -107,7 +107,7 @@ namespace Tuyeres_Status
             for (int i = 0; i < d.Length; i++)
             {
                 // 风量
-                Q[i] = ri1[i] * Q_0 / sigma;
+                Q[i] = ri1[i] * Q0 / sigma;
 
                 // 标准风速
                 v_stand[i] = 4 * Q[i] / (PI * Pow(d[i], 2));
@@ -124,11 +124,11 @@ namespace Tuyeres_Status
                 sum_S += m[i] * S[i];
             }
             // 计算平均实际风速
-            v_actua_ave = Q_0 * prop / sum_S;
+            v_actua_ave = Q0 * prop / sum_S;
         }
 
         // 计算鼓风动能
-        public void Calc_KineticEnergy()
+        public void CalcKineticEnergy()
         {
             if (!data_proper) return;
             // 计算各风口鼓风动能
@@ -138,7 +138,7 @@ namespace Tuyeres_Status
             }
 
             // 计算平均鼓风动能
-            KE_ave = rho * Q_0 * Pow(v_actua_ave, 2) / (2 * n * 1000);
+            KE_ave = rho * Q0 * Pow(v_actua_ave, 2) / (2 * n * 1000);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Tuyeres_Status
         /// <param name="M">煤比(kg/t)</param>
         /// <param name="D_pc">入炉焦炭的平均粒度(m)</param>
         /// <param name="L">风口长度(m)</param>
-        public void Calc_RacewaySize(double M, double D_pc, double L)
+        public void CalcRacewaySize(double M, double D_pc, double L)
         {
             if (!data_proper) return;
             // 经验公式
@@ -185,7 +185,7 @@ namespace Tuyeres_Status
         /// <param name="m_Coal">吨铁喷煤量(kg/tHM)</param>
         /// <param name="f_Coal_H2O">煤粉含水量(%)</param>
         /// <param name="V_Bl">吨铁风量(m3/tHM)</param>
-        public void Calc_CombustionTemp(double phi_Bl_H2O, double OE, double m_Coal, double f_Coal_H2O, double V_Bl)
+        public void CalcCombustionTemp(double phi_Bl_H2O, double OE, double m_Coal, double f_Coal_H2O, double V_Bl)
         {
             if (!data_proper) return;
             // 经验线性公式

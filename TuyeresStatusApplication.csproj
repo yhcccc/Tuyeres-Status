@@ -43,16 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tuyeres_Status.cs" />
+    <Compile Include="TuyeresStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Calc_Status\Calc_Status.csproj">
+    <ProjectReference Include="Calc_Status\CalcStatus.csproj">
       <Project>{4f3ded89-46c8-4ac8-87aa-304c355a2faa}</Project>
-      <Name>Calc_Status</Name>
+      <Name>CalcStatus</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
