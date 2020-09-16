@@ -14,12 +14,12 @@ namespace TuyeresStatusApplication
         {
             /****************
             展示*/
-            double Actual_Q = 6000; // 实际入炉风量(m3/min)
+            double Actual_Q = 5000; // 实际入炉风量(m3/min)
             double[] d = { 0.12, 0.13 }; // 直径种类(m)
-            int[] m = { 0, 32 }; // 各风口个数，它们的和为风口总数量
-            double[] mu = { 0.8337 * Sqrt(1.9), Sqrt(1.9) }; // 各支路流阻比;变直径系数sqrt((12+15/13+15)^5)=0.8337
-            double T_Bl = 1180, P_Bl = 0.412; // 高炉入炉风温(°C); 风压(MPa)
-            double phi_Bl_H2O = 24, OE = 5, m_Coal = 155, f_Coal_H2O = 2, V_Bl = 1080;
+            int[] m = { 11, 17 }; // 各风口个数，它们的和为风口总数量
+            double[] mu = { 0.8186 * Sqrt(1.9), Sqrt(1.9) }; // 各支路流阻比;变直径系数sqrt((12+15/13+15)^5)=0.8337；或sqrt((12/13)^5)=0.8186
+            double T_Bl = 1200, P_Bl = 0.41; // 高炉入炉风温(°C); 风压(MPa)
+            double phi_Bl_H2O = 24, OE = 5, m_Coal = 160, f_Coal_H2O = 2, V_Bl = 1080;
             // 鼓风湿度(g/m3), 富氧率(%), 吨铁喷煤量(kg/tHM), 煤粉含水量(%), 吨铁风量(m3/tHM)
             double M = 160, D_pc = 0.04, L = 0.55; // 煤比(kg/t)，焦炭的平均粒度(m)，风口长度(m)
 
@@ -27,7 +27,7 @@ namespace TuyeresStatusApplication
             Calc.CalcWindSpeed();
             Calc.CalcKineticEnergy();
             Calc.CalcCombustionTemp(phi_Bl_H2O, OE, m_Coal, f_Coal_H2O, V_Bl);
-            Calc.CalcRacewaySize(M, D_pc, L);
+            Calc.CalcRacewaySize(m_Coal, D_pc, L);
             Calc.Display();
 
             /******************/

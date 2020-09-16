@@ -77,7 +77,7 @@ namespace TuyeresStatus
                 data_proper = true;
                 n = m.Sum(); // 风口总数
                 prop = (T0 + T_Bl) * P0 / ((P0 + P_Bl) * T0);
-                Q0 = Actual_Q / 60; // 单位转换
+                Q0 = Actual_Q / 60.0; // 单位转换
 
 
                 for (int i = 0; i < d.Length; i++)
@@ -134,11 +134,11 @@ namespace TuyeresStatus
             // 计算各风口鼓风动能
             for (int i = 0; i < d.Length; i++)
             {
-                KE[i] = v_stand[i] == -1 ? -1 : rho * v_stand[i] * S[i] * Pow(v_actua[i], 2) / (2 * 1000);
+                KE[i] = v_stand[i] == -1 ? -1 : rho * v_stand[i] * S[i] * Pow(v_actua[i], 2) / (2.0 * 1000);
             }
 
             // 计算平均鼓风动能
-            KE_ave = rho * Q0 * Pow(v_actua_ave, 2) / (2 * n * 1000);
+            KE_ave = rho * Q0 * Pow(v_actua_ave, 2) / (2.0 * n * 1000);
         }
 
         /// <summary>
